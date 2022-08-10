@@ -2,7 +2,7 @@ image:
 	DOCKER_BUILDKIT=1 docker build -t mstress:latest .
 
 container:
-	docker run -d --network natssync-net --name mstress -p 80:8080 -e NATS_URL="nats://nats-cloud:4222" -e MONGO_URL="mongodb://mongo-cloud" mstress
+	docker run -d --network natssync-net --name mstress -p 8080:8080 -e NATS_URL="nats://nats-cloud:4222" -e MONGO_URL="mongodb://mongo-cloud" mstress
 
 push:
 	docker push coffeefreak101/mstress:latest

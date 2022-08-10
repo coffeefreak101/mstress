@@ -2,5 +2,4 @@
 
 client_id=$1
 
-curl localhost/tests/${client_id} | jq .
-
+curl localhost:8080/tests/${client_id} | jq .
