@@ -8,7 +8,6 @@ use std::collections::HashMap;
 use std::sync::mpsc::{channel, Sender};
 use std::time::{Duration, SystemTime};
 use std::{io, thread};
-use std::fmt::format;
 use uuid::Uuid;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]

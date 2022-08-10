@@ -1,5 +1,6 @@
 use std::env;
 
+#[derive(Clone)]
 pub struct Config {
     pub nats_url: String,
     pub mongo_url: String,

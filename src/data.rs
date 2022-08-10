@@ -1,6 +1,7 @@
 use futures::StreamExt;
 use mongodb::bson::document::Document;
 use mongodb::{Client, Cursor};
+use crate::Config;
 
 #[derive(Clone)]
 pub struct DataManager {
@@ -10,9 +11,12 @@ pub struct DataManager {
 }
 
 impl DataManager {
-    pub fn new(client: Client) -> DataManager {
+    pub async fn new(config: &Config) -> DataManager {
+        let options = mongodb::options::ClientOptions::parse(config.mongo_url.as_ref())
+            .await
+            .unwrap();
         DataManager {
-            client,
+            client: Client::with_options(options).unwrap(),
             db: "natssync".to_string(),
             collection: "locations".to_string(),
         }

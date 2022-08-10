@@ -8,7 +8,6 @@ use crate::test_manager::{
 use actix_web::{middleware, web, App, HttpResponse, HttpServer, Responder};
 use async_nats as nats;
 use futures::future;
-use mongodb;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -69,9 +68,10 @@ async fn handle_mps_test(
 
 async fn handle_client_mps_test(
     nc: web::Data<nats::Connection>,
-    data: web::Data<DataManager>,
+    config: web::Data<Config>,
 ) -> impl Responder {
     log::debug!("Handling client mps test");
+    let data = DataManager::new(&config).await;
     let clients = data.clients().await;
     let mut test_futures = Vec::new();
     for client_id in clients.iter() {
@@ -83,7 +83,8 @@ async fn handle_client_mps_test(
     HttpResponse::Ok().json(collection)
 }
 
-async fn handle_get_clients(data: web::Data<DataManager>) -> impl Responder {
+async fn handle_get_clients(config: web::Data<Config>) -> impl Responder {
+    let data = DataManager::new(&config).await;
     let clients = data.clients().await;
     let collection = ClientCollection{count: clients.len(), clients};
     HttpResponse::Ok().json(collection)
@@ -97,16 +98,12 @@ pub async fn run(config: Config) -> std::io::Result<()> {
     log::info!("Starting up webserver");
 
     let nc = new_async(&config.nats_url).await;
-    let options = mongodb::options::ClientOptions::parse(config.mongo_url.as_ref())
-        .await
-        .unwrap();
-    let mongo = mongodb::Client::with_options(options).unwrap();
-    let data_mgr = DataManager::new(mongo);
+    let port = config.web_port;
 
     HttpServer::new(move || {
         App::new()
             .data(nc.clone())
-            .data(data_mgr.clone())
+            .data(config.clone())
             .wrap(middleware::Logger::default())
             .route("/", web::get().to(hello))
             .route("/clients", web::get().to(handle_get_clients))
@@ -115,7 +112,7 @@ pub async fn run(config: Config) -> std::io::Result<()> {
             .route("/tests/{client}", web::get().to(handle_client_test))
             .route("/tests/{client}/mps", web::get().to(handle_mps_test))
     })
-    .bind(format!("0.0.0.0:{}", config.web_port))?
+    .bind(format!("0.0.0.0:{}", port))?
     .run()
     .await
 }

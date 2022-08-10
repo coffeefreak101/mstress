@@ -15,12 +15,13 @@ make image
 The service is designed to run in the same environment as the NATSSync server,
 and requires access to the mongodb and NATS instances used by the server.
 
-Use environment variables to specify the mongodb and NATS URLs:
+Use environment variables to configure the service:
 
 | env var | default value |
 |---------|---------------|
 | NATS_URL | nats://nats:4222
 | MONGO_URL | mongodb://mongo
+| WEB_PORT | 8080
 
 ## API
 The service has an HTTP API (TCP port 8080) for running the tests.
