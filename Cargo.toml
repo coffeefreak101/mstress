@@ -1,0 +1,19 @@
+[package]
+name = "mstress"
+version = "0.1.0"
+authors = ["John Mears <jmears@netapp.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+actix-web = "3.3.2"
+log = "0.4.14"
+env_logger = "0.8.3"
+async-nats = "0.9.4"
+uuid = { version = "0.8.2", features = ["serde", "v4"]}
+serde = "1.0.123"
+serde_json = "1.0.62"
+async-std = "1.9.0"
+futures = "0.3.13"
+mongodb = "1.2.0"
